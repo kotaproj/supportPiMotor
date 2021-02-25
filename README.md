@@ -12,7 +12,7 @@
 
 を使用します。
 
-
+詳細は、[Wiki](https://github.com/kotaproj/supportPiMotor/wiki)を見てください。
 
 ## Requirement
 
