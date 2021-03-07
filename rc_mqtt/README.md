@@ -1,11 +1,11 @@
-# MQTTラジコン
+# MQTTラズパイラジコン
 
-**MQTTラジコン** は、ラズベリーパイモーターハットを使ったラジコンです。
+**MQTTラズパイラジコン** は、ラズベリーパイモーターハットを使ったラジコンです。
 MQTT通信を使って制御します。
 
 
 
-- [MQTTラジコン ![MIT License](LICENSE)](#mqttラジコン-)
+- [MQTTラズパイラジコン](#mqttラズパイラジコン)
 - [Requirement](#requirement)
   - [MQTT](#mqtt)
     - [MQTT Broker(サーバ)](#mqtt-brokerサーバ)
