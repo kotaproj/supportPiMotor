@@ -18,11 +18,21 @@
 
 以下のモジュールのインストールが必要です。
 
+### apt
+
+```bash
+$ sudo apt install pigpio
+$ sudo service pigpiod start
+$ sudo systemctl enable pigpiod.service
+```
+
+### pip
+
 ```bash
 $ pip install pigpio
 $ pip install smbus
 $ pip install smbus2
 $ pip install adafruit-circuitpython-ssd1306
-$ pip install pillow
+$ pip install pillow==8.1.0
 $ git clone https://github.com/adafruit/Adafruit_CircuitPython_SSD1306
 ```
