@@ -18,12 +18,21 @@
 
 以下のモジュールのインストールが必要です。
 
+Pythonは3.7以上が必要。
+
 ### apt
 
 ```bash
 $ sudo apt install pigpio
 $ sudo service pigpiod start
 $ sudo systemctl enable pigpiod.service
+```
+## Pythonの環境を用意する
+* env名は好きな名前を用意してください
+
+```bash
+$ python3 -m venv env_torpc
+$ source env_torpc/bin/activate
 ```
 
 ### pip
