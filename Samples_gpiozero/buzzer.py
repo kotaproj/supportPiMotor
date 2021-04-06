@@ -1,4 +1,5 @@
-from gpiozero import PWMLED
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
 from gpiozero.pins.pigpio import PiGPIOFactory
 from time import sleep
 
@@ -10,27 +11,27 @@ buzzer_pins = {
 }
 
 def main():
-    # 各ピンをPWM設定
+    # 各ピンをbuzzer設定
     factory = PiGPIOFactory()
     buzzers = {}
     for key, pin in buzzer_pins.items():
-        buzzers[key] = PWMLED(pin, pin_factory=PiGPIOFactory())
+        buzzers[key] = TonalBuzzer(pin, pin_factory=PiGPIOFactory())
 
     # 音を鳴らす
     try:
         for _ in range(5):
             for key, buzzer in buzzers.items():
-                buzzer.frequency = 1000
-                buzzer.value = 0.5
+
+                buzzer.play(Tone("A4"))
                 sleep(0.5)
-                buzzer.value = 0.0
+                buzzer.play(Tone(220.0)) # Hz
                 sleep(0.5)
+                buzzer.play(Tone(60)) # middle C in MIDI notation
+                sleep(0.5)
+                buzzer.stop()
     except KeyboardInterrupt:
         print("stop")
 
-    # Mute
-    buzzer.value = 0.0
-    buzzer.frequency = 100
     return
 
 if __name__ == "__main__":
