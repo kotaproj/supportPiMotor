@@ -57,6 +57,8 @@ class OledThread(threading.Thread):
         # Clear display.
         self._oled.fill(0)
         self._oled.show()
+
+        self._recvice({"time" : "3000", "disp" : "ip"})
         return
 
     def stop(self):
