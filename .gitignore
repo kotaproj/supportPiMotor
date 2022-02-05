@@ -9,3 +9,4 @@
 /rc_joystick/device_path
 /rc_joystick/pre_listen
 /rc_joystick/except_listen
+/rc_joystick/path.json

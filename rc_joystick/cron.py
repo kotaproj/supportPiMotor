@@ -1,6 +1,10 @@
 import subprocess
 import time
+import json
 
 time.sleep(180)
 
-subprocess.run(['/home/pi/PyEnv/env_yrobo/bin/python', '/home/pi/kotap/supportPiMotor/rc_joystick/main.py'])
+with open('./path.json') as f:
+    jsn = json.load(f)
+
+subprocess.run([jsn["env"], jsn["path"]])
