@@ -4,6 +4,8 @@ import time
 from time import sleep
 from commands import SUBSC_DICT
 from eightbitdo_zero2 import EightBitDoZero2
+import os
+import subprocess
 
 # debug
 import sys
@@ -116,6 +118,12 @@ class JsThread(threading.Thread):
         def off_select():
             return
 
+        while True:
+            if os.path.exists(DEVICE_PATH):
+               subprocess.run(["touch", "/home/pi/kotap/supportPiMotor/rc_joystick/device_path"])
+               break
+
+            time.sleep(1) 
 
         controller = EightBitDoZero2(
             device_path=DEVICE_PATH,
@@ -144,7 +152,12 @@ class JsThread(threading.Thread):
         )
 
         # Start listen
-        controller.listen()
+        try:
+           subprocess.run(["touch", "/home/pi/kotap/supportPiMotor/rc_joystick/pre_listen"])
+           controller.listen()
+        except:
+           subprocess.run(["touch", "/home/pi/kotap/supportPiMotor/rc_joystick/except_listen"])
+        
         return
 
    
