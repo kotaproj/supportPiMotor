@@ -1,4 +1,4 @@
 {
-  "env": "python3",
-  "path": "main.py"
+  "env": "~/supportPiMotor/env/bin/python",
+  "path": "~/supportPiMotor/rc_joystick/main.py"
 }
