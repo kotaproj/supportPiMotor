@@ -5,11 +5,13 @@ from time import sleep
 from commands import SUBSC_DICT
 from eightbitdo_zero2 import EightBitDoZero2
 import os
+from stat import filemode
 import subprocess
 
 # debug
 import sys
 from icecream import ic
+import syslog
 
 DEVICE_PATH = "/dev/input/js0"
 
@@ -118,12 +120,20 @@ class JsThread(threading.Thread):
         def off_select():
             return
 
+		# find : /dev/input/js*
         while True:
             if os.path.exists(DEVICE_PATH):
-               subprocess.run(["touch", "/home/pi/kotap/supportPiMotor/rc_joystick/device_path"])
-               break
-
+                syslog.syslog(('find:' + DEVICE_PATH))
+                break
             time.sleep(1) 
+
+        # Check permissions. - wait:crw------- -> crw-rw----
+        while True:
+            fmode = filemode(os.stat(DEVICE_PATH).st_mode)
+            syslog.syslog(str(fmode))
+            if fmode.count("r") >= 2:
+                break
+            time.sleep(5)
 
         controller = EightBitDoZero2(
             device_path=DEVICE_PATH,
@@ -153,10 +163,10 @@ class JsThread(threading.Thread):
 
         # Start listen
         try:
-           subprocess.run(["touch", "/home/pi/kotap/supportPiMotor/rc_joystick/pre_listen"])
+           syslog.syslog('controller.listen')
            controller.listen()
-        except:
-           subprocess.run(["touch", "/home/pi/kotap/supportPiMotor/rc_joystick/except_listen"])
+        except Exception as e:
+           syslog.syslog(('except' + str(e)))
         
         return
 
