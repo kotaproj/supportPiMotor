@@ -6,6 +6,8 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 import sys
 from icecream import ic
 
+from systems import SystemsData, RoboMode
+
 # LEDのピン設定
 PIN_LED_NO1 = 16
 PIN_LED_NO2 = 20
@@ -15,6 +17,12 @@ LED_DICT = {
     "no2" : PIN_LED_NO2,
 }
 
+
+ROBO_MODE_DICT = {
+    RoboMode.ARM : {"no1": "off", "no2": "off"},
+    RoboMode.GEAR : {"no1": "off", "no2": "on"},
+    RoboMode.TIMER : {"no1": "on", "no2": "off"},
+}
 
 class LedThread(threading.Thread):
     """
@@ -35,9 +43,14 @@ class LedThread(threading.Thread):
         factory = PiGPIOFactory()
         for key, pin in LED_DICT.items():
             self._leds[key] = LED(pin, pin_factory=PiGPIOFactory())
+
+        # system data
+        self._sysdat = SystemsData()
         return
 
     def stop(self):
+        for key in LED_DICT:
+            self._write_leds_cmd(key, "off")
         self.stop_event.set()
         return
 
@@ -51,23 +64,35 @@ class LedThread(threading.Thread):
                 ic("[led_th]", "error!!!")
                 continue
             
+            # system data
+            if "robo_mode" in value["action"]:
+                led_onoffs = ROBO_MODE_DICT[self._sysdat.robo_mode]
+                for k, v in led_onoffs.items():
+                    ic(led_onoffs, k, v)
+                    self._write_leds_cmd(k, v)
+                continue
+
+            # on/off
             if value["name"] in self._leds:
                 name = value["name"]
-                on_off = True if ("on" in value["action"]) else False
-                self._write_leds(name, on_off)
+                if value["action"] in ["on", "off", "blink"]:
+                    self._write_leds_cmd(name, value["action"])
+                else:
+                    ic("[led_th]", "error!!! - action")
         return
 
     @property
     def rcv_que(self):
         return self._rcv_que
 
-    def _write_leds(self, name, on_off):
-        if on_off:
+    def _write_leds_cmd(self, name, cmd):
+        if "on" in cmd:
             self._leds[name].on()
-        else:
+        elif "off" in cmd:
             self._leds[name].off()
+        elif "blink" in cmd:
+            self._leds[name].blink()
         return
-
 
 def main():
     import time
@@ -78,13 +103,15 @@ def main():
 
     q.put({"type": "led", "name": "no1", "action": "on"})
     time.sleep(3)
-    q.put({"type": "led", "name": "no1", "action": "off"})
-    time.sleep(1)
-    q.put({"type": "led", "name": "no2", "action": "on"})
-    time.sleep(3)
-    q.put({"type": "led", "name": "no2", "action": "off"})
-    time.sleep(1)
+    # q.put({"type": "led", "name": "no1", "action": "off"})
+    # time.sleep(1)
+    # q.put({"type": "led", "name": "no2", "action": "on"})
+    # time.sleep(3)
+    # q.put({"type": "led", "name": "no2", "action": "off"})
+    # time.sleep(1)
 
+    q.put({"type": "led", "name": "noAll", "action": "robo_mode"})
+    time.sleep(3)
     led_th.stop()
    
     return

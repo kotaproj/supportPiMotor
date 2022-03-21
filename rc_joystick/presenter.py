@@ -1,6 +1,7 @@
 from queue import Queue
 import threading
 import ast
+from systems import SystemsData, RoboMode
 
 # debug
 import sys
@@ -18,6 +19,7 @@ class PreThread(threading.Thread):
 
         self._rcv_que = Queue()
         self._snd_ques = snd_ques
+        self._sysdat = SystemsData()
         return
 
     def stop(self):
@@ -116,8 +118,15 @@ class PreThread(threading.Thread):
             for act in acts:
                 if act in action:
                     val_act = act
+                    # update : system data
+                    self._sysdat.dcm_stat = act
+                    # print()
+                    print(self._sysdat.dcm_stat)
                     break
-            val_speed = "fast"
+            # fast / mid / slow
+            val_speed = self._sysdat.dcm_speed
+            print(val_speed)
+
             self._snd_ques["dcm"].put({"type": "dcm", "action": val_act, "speed": val_speed})
             return
 
@@ -132,6 +141,58 @@ class PreThread(threading.Thread):
             self._snd_ques["oled"].put({"type": "oled", "time": val_time, "disp": val_disp})
             return
 
+        def send_que_js0(action):
+            ic()
+            # if "js0" not in self._snd_ques:
+            #     ic(sys._getframe().f_code.co_filename, sys._getframe().f_code.co_name, "que not found!")
+            #     return
+
+            def update_dcm():
+                # 動作時はspeed変更
+                dcm_stat = self._sysdat.dcm_stat
+                if self._sysdat.dcm_stat in ["forward", "back", "left", "right"]:
+                    self._snd_ques["dcm"].put({"type": "dcm", "action": dcm_stat, "speed": self._sysdat.dcm_speed})
+                return
+
+            # select : system mode
+            # if "js0_on_select" in action:
+            if "js0_on_a" in action:
+                # next
+                self._sysdat.update_next_robo_mode()
+                self._snd_ques["led"].put({"type": "led", "name": "noAll", "action": "robo_mode"})
+
+            if "js0_on_r" in action:
+                if RoboMode.GEAR == self._sysdat.robo_mode:
+                    self._sysdat.update_next_dcm_speed(dirct=True)
+                    print("js0_on_r")
+                    print(self._sysdat.dcm_speed)
+                    update_dcm()
+                else:
+                    self._snd_ques["servo"].put({"type": "servo", "name": "right", "action": "raise"})
+
+            if "js0_off_r" in action:
+                if RoboMode.GEAR == self._sysdat.robo_mode:
+                    pass
+                else:
+                    self._snd_ques["servo"].put({"type": "servo", "name": "right", "action": "down"})
+
+            if "js0_on_l" in action:
+                if RoboMode.GEAR == self._sysdat.robo_mode:
+                    self._sysdat.update_next_dcm_speed(dirct=False)
+                    print("js0_on_l")
+                    print(self._sysdat.dcm_speed)
+                    update_dcm()
+                else:
+                    self._snd_ques["servo"].put({"type": "servo", "name": "left", "action": "raise"})
+
+            if "js0_off_l" in action:
+                if RoboMode.GEAR == self._sysdat.robo_mode:
+                    pass
+                else:
+                    self._snd_ques["servo"].put({"type": "servo", "name": "left", "action": "down"})
+
+            return
+
         action = item["action"]
         ic(sys._getframe().f_code.co_filename, sys._getframe().f_code.co_name, item)
         if "buzzer" in action:
@@ -144,6 +205,8 @@ class PreThread(threading.Thread):
             send_que_oled(action)
         elif "led" in action:
             send_que_led(action)
+        elif "js0" in action:
+            send_que_js0(action)
         else:
             ic(sys._getframe().f_code.co_filename, sys._getframe().f_code.co_name, "command not found!")
         return

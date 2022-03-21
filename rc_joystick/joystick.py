@@ -39,85 +39,103 @@ class JsThread(threading.Thread):
 
         def on_up():
             self._send_msg(SUBSC_DICT["pim:motor_forward"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_up"])
             return
 
         def on_down():
             self._send_msg(SUBSC_DICT["pim:motor_back"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_down"])
             return
 
         def off_up_or_down():
             self._send_msg(SUBSC_DICT["pim:motor_stop"])
+            # self._send_msg(SUBSC_DICT["pim:js0_off_up_or_down"])
             return
 
         def on_right():
             self._send_msg(SUBSC_DICT["pim:motor_right"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_right"])
             return
 
         def on_left():
             self._send_msg(SUBSC_DICT["pim:motor_left"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_left"])
             return
 
         def off_right_or_left():
             self._send_msg(SUBSC_DICT["pim:motor_stop"])
+            # self._send_msg(SUBSC_DICT["pim:js0_off_right_or_left"])
             return
 
         def on_y():
             self._send_msg(SUBSC_DICT["pim:buzzer_short"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_y"])
             return
 
         def off_y():
+            # self._send_msg(SUBSC_DICT["pim:js0_off_y"])
             return
 
         def on_x():
             self._send_msg(SUBSC_DICT["pim:oled_ip"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_x"])
             return
 
         def off_x():
             self._send_msg(SUBSC_DICT["pim:oled_clear"])
+            # self._send_msg(SUBSC_DICT["pim:js0_off_x"])
             return
 
         def on_a():
-            self._send_msg(SUBSC_DICT["pim:led_no1_on"])
+            # self._send_msg(SUBSC_DICT["pim:led_no1_on"])
+            self._send_msg(SUBSC_DICT["pim:js0_on_a"])
             return
 
         def off_a():
-            self._send_msg(SUBSC_DICT["pim:led_no1_off"])
+            # self._send_msg(SUBSC_DICT["pim:led_no1_off"])
+            self._send_msg(SUBSC_DICT["pim:js0_off_a"])
             return
 
         def on_b():
             self._send_msg(SUBSC_DICT["pim:led_no2_on"])
+            # self._send_msg(SUBSC_DICT["pim:js0_on_b"])
             return
 
         def off_b():
             self._send_msg(SUBSC_DICT["pim:led_no2_off"])
+            # self._send_msg(SUBSC_DICT["pim:js0_off_b"])
             return
 
         def on_r():
-            self._send_msg(SUBSC_DICT["pim:servo_right_raise"])
+            self._send_msg(SUBSC_DICT["pim:js0_on_r"])
             return
 
         def off_r():
-            self._send_msg(SUBSC_DICT["pim:servo_right_down"])
+            self._send_msg(SUBSC_DICT["pim:js0_off_r"])
             return
 
         def on_l():
-            self._send_msg(SUBSC_DICT["pim:servo_left_raise"])
+            self._send_msg(SUBSC_DICT["pim:js0_on_l"])
             return
 
         def off_l():
-            self._send_msg(SUBSC_DICT["pim:servo_left_down"])
+            self._send_msg(SUBSC_DICT["pim:js0_off_l"])
             return
 
         def on_start():
+            self._send_msg(SUBSC_DICT["pim:js0_on_start"])
             return
 
         def off_start():
+            self._send_msg(SUBSC_DICT["pim:js0_off_start"])
             return
 
         def on_select():
+            self._send_msg(SUBSC_DICT["pim:js0_on_select"])
             return
 
         def off_select():
+            self._send_msg(SUBSC_DICT["pim:js0_off_select"])
             return
 
 		# find : /dev/input/js*
